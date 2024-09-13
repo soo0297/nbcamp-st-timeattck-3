@@ -110,14 +110,7 @@ const App = () => {
             setViews(e.target.value);
           }}
         />
-        <button
-          type="submit"
-          onClick={() => {
-            addPost({ title, views });
-          }}
-        >
-          추가
-        </button>
+        <button type="submit">추가</button>
       </form>
       <div
         style={{
