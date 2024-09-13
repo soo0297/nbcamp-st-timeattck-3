@@ -5,6 +5,9 @@ import { useState } from "react";
 const App = () => {
   const queryClient = useQueryClient();
 
+  const [title, setTitle] = useState("");
+  const [views, setViews] = useState(0);
+
   const getPosts = async () => {
     const response = await axios.get("http://localhost:4000/posts");
     return response.data;
@@ -18,13 +21,10 @@ const App = () => {
     return response.data;
   };
 
-  const [title, setTitle] = useState("");
-  const [views, setViews] = useState(0);
-
   const {
     data: posts,
-    isPending,
-    isError,
+    isPending: isPostsPending,
+    isError: isPostsError,
   } = useQuery({
     queryKey: ["posts"],
     queryFn: getPosts,
@@ -37,51 +37,79 @@ const App = () => {
     },
   });
 
-  if (isPending) {
+  if (isPostsPending) {
     return <div>로딩중입니다...</div>;
   }
-  if (isError) {
+  if (isPostsError) {
     return <div>에러가 발생했습니다.</div>;
   }
 
   return (
-    <div>
-      <div>
-        <label>title</label>
+    <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          addPost({ title, views });
+          setTitle("");
+          setViews(0);
+        }}
+      >
         <input
+          type="text"
+          placeholder="제목"
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
-          placeholder="title 입력"
         />
-      </div>
-      <div>
-        <label>views</label>
         <input
+          type="number"
+          placeholder="views 입력"
           value={views}
           onChange={(e) => {
             setViews(e.target.value);
           }}
-          placeholder="views 입력"
         />
-      </div>
-      <button
-        onClick={() => {
-          mutation.mutate({ title, views });
+        <button
+          type="submit"
+          onClick={() => {
+            mutation.mutate({ title, views });
+          }}
+        >
+          추가
+        </button>
+      </form>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          // justifyContent: "center",
         }}
       >
-        추가
-      </button>
-      {posts?.map((post) => {
-        return (
-          <div key={post.id}>
-            <span>{post.title}</span>
-            <span>{post.views}</span>
-          </div>
-        );
-      })}
-    </div>
+        {posts?.map((post) => {
+          return (
+            <div
+              key={post.id}
+              style={{
+                backgroundColor: "#f0f0f0",
+                border: "1px solid black",
+                padding: "10px",
+                borderRadius: "10px",
+                margin: "10px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <h3>{post.title}</h3>
+              <p>{post.views}</p>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 
