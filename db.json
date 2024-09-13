@@ -31,9 +31,14 @@
       "id": "2",
       "text": "another comment about post 1",
       "postId": "1"
+    },
+    {
+      "id": "fd5b",
+      "text": "와랄랄",
+      "postId": "8b46"
     }
   ],
   "profile": {
-    "name": "typicode"
+    "name": "르탄"
   }
 }
